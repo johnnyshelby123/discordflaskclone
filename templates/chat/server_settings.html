@@ -1,0 +1,118 @@
+{% extends "layout.html" %}
+
+{% block title %}Server Settings - {{ server.name }}{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <div class="settings-header">
+        <div class="back-button">
+            <a href="{{ url_for('server.view_server', server_id=server.id) }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Server
+            </a>
+        </div>
+        <h1>Server Settings</h1>
+    </div>
+
+    <div class="settings-content">
+        <form action="{{ url_for('server.update_settings', server_id=server.id) }}" method="POST" enctype="multipart/form-data" class="settings-form">
+            <div class="form-group">
+                <label for="server-name">Server Name</label>
+                <input type="text" id="server-name" name="name" value="{{ server.name }}" required>
+                <div class="help-text">Give your server a unique name to help members identify it.</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="server-description">Description</label>
+                <textarea id="server-description" name="description" rows="3">{{ server.description }}</textarea>
+                <div class="help-text">Describe your server's purpose or community.</div>
+            </div>
+            
+            <div class="form-group">
+                <label>Server Icon</label>
+                <div class="server-icon-upload">
+                    <div class="server-icon-preview">
+                        <img src="{{ server.image_url or '/static/images/default_server_icon.svg' }}" alt="{{ server.name }}" id="icon-preview">
+                    </div>
+                    <div class="upload-controls">
+                        <label for="server-icon" class="btn btn-secondary">Upload Image</label>
+                        <input type="file" id="server-icon" name="server_image" accept=".jpg,.jpeg,.png,.gif,.webp" style="display: none;">
+                        <div class="help-text">Recommended size: 128x128 pixels</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+        
+        <div class="danger-zone">
+            <h2>Danger Zone</h2>
+            <div class="danger-action">
+                <div class="danger-info">
+                    <h3>Delete Server</h3>
+                    <p>This action is permanent and cannot be undone. All channels and messages will be deleted.</p>
+                </div>
+                <button id="delete-server-toggle" class="btn btn-danger">Delete Server</button>
+            </div>
+            
+            <div id="delete-confirmation" class="delete-confirmation" style="display: none;">
+                <p>Please type <strong>{{ server.name }}</strong> to confirm:</p>
+                <input type="text" id="delete-server-confirm" placeholder="Enter server name">
+                <button id="delete-server-btn" class="btn btn-danger" disabled>Permanently Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Server icon preview
+    const serverIcon = document.getElementById('server-icon');
+    const iconPreview = document.getElementById('icon-preview');
+    
+    if (serverIcon && iconPreview) {
+        serverIcon.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    iconPreview.src = e.target.result;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+    
+    // Delete server confirmation
+    const deleteToggle = document.getElementById('delete-server-toggle');
+    const deleteConfirmation = document.getElementById('delete-confirmation');
+    const deleteServerConfirm = document.getElementById('delete-server-confirm');
+    const deleteServerBtn = document.getElementById('delete-server-btn');
+    const serverName = "{{ server.name }}";
+    
+    if (deleteToggle && deleteConfirmation) {
+        deleteToggle.addEventListener('click', function() {
+            deleteConfirmation.style.display = deleteConfirmation.style.display === 'none' ? 'block' : 'none';
+        });
+    }
+    
+    if (deleteServerConfirm && deleteServerBtn) {
+        deleteServerConfirm.addEventListener('input', function() {
+            deleteServerBtn.disabled = this.value !== serverName;
+        });
+        
+        deleteServerBtn.addEventListener('click', function() {
+            if (deleteServerConfirm.value === serverName) {
+                window.location.href = "{{ url_for('server.delete_server', server_id=server.id) }}";
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

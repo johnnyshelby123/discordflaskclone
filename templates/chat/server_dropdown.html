@@ -1,4 +1,3 @@
-<!-- Server Dropdown Menu -->
 <div class="dropdown" id="server-dropdown-container">
     <div class="server-dropdown" id="server-dropdown-trigger">⋮</div>
     <div class="dropdown-content server-dropdown-content {% if server.owner_id == current_user.id %}owner{% else %}non-owner{% endif %}" id="server-dropdown-menu">
@@ -9,10 +8,10 @@
         
         <div class="dropdown-divider"></div>
         
-        <div class="dropdown-item owner-only" id="server-settings-btn">
+        <a href="{{ url_for('server.server_settings', server_id=server.id) }}" class="dropdown-item owner-only">
             <div class="dropdown-icon">⚙️</div>
             <div class="dropdown-text">Server Settings</div>
-        </div>
+        </a>
         
         <div class="dropdown-item non-owner-only danger" id="leave-server-btn">
             <div class="dropdown-icon">🚪</div>
@@ -27,19 +26,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const dropdownMenu = document.getElementById('server-dropdown-menu');
     const invitePeopleBtn = document.getElementById('invite-people-btn');
     const leaveServerBtn = document.getElementById('leave-server-btn');
-    const serverSettingsBtn = document.getElementById('server-settings-btn');
     const inviteModal = document.getElementById('invite-modal');
-    const serverSettingsModal = document.getElementById('server-settings-modal');
     
-    // Toggle dropdown menu
-    if (dropdownTrigger && dropdownMenu) {
-        dropdownTrigger.addEventListener('click', function(e) {
+    function toggleDropdown(e) {
+        if (e) {
             e.stopPropagation();
-            dropdownMenu.classList.toggle('show');
+        }
+        
+        const isShown = dropdownMenu.classList.contains('show');
+        
+        const allDropdowns = document.querySelectorAll('.dropdown-content');
+        allDropdowns.forEach(dropdown => {
+            dropdown.classList.remove('show');
         });
+        
+        if (!isShown) {
+            dropdownMenu.classList.add('show');
+        }
     }
     
-    // Close dropdown when clicking outside
+    if (dropdownTrigger && dropdownMenu) {
+        dropdownTrigger.addEventListener('click', toggleDropdown);
+    }
+    
     document.addEventListener('click', function(e) {
         if (dropdownMenu && dropdownMenu.classList.contains('show') && 
             !dropdownMenu.contains(e.target) && 
@@ -48,28 +57,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Invite People button
     if (invitePeopleBtn && inviteModal) {
         invitePeopleBtn.addEventListener('click', function() {
             inviteModal.style.display = 'block';
             dropdownMenu.classList.remove('show');
         });
+        
+        const closeModalBtn = inviteModal.querySelector('.close-modal');
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', function() {
+                inviteModal.style.display = 'none';
+            });
+        }
+        
+        window.addEventListener('click', function(e) {
+            if (e.target === inviteModal) {
+                inviteModal.style.display = 'none';
+            }
+        });
     }
     
-    // Leave Server button
     if (leaveServerBtn) {
         leaveServerBtn.addEventListener('click', function() {
             if (confirm('Are you sure you want to leave this server?')) {
                 window.location.href = "{{ url_for('server.leave_server', server_id=server.id) }}";
             }
-            dropdownMenu.classList.remove('show');
-        });
-    }
-    
-    // Server Settings button
-    if (serverSettingsBtn && serverSettingsModal) {
-        serverSettingsBtn.addEventListener('click', function() {
-            serverSettingsModal.style.display = 'block';
             dropdownMenu.classList.remove('show');
         });
     }

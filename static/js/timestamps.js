@@ -2,10 +2,8 @@ class TimestampFormatter {
   constructor() {
     this.timestamps = new Map();
   }
-
   init() {
   }
-
   formatTimestamp(timestamp) {
     const date = new Date(timestamp);
     
@@ -29,9 +27,7 @@ class TimestampFormatter {
     this.timestamps.clear();
   }
 }
-
 const timestampFormatter = new TimestampFormatter();
-
 document.addEventListener('DOMContentLoaded', () => {
   timestampFormatter.init();
   
@@ -42,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
-
 function escapeHtml(unsafe) {
   return unsafe
     .replace(/&/g, "&amp;")
@@ -51,7 +46,6 @@ function escapeHtml(unsafe) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
-
 function addMessageToChat(data) {
     const messagesContainer = document.getElementById('messages-container');
     if (!messagesContainer) return;
@@ -79,12 +73,6 @@ function addMessageToChat(data) {
                 <span class="message-timestamp" id="${timestampId}" data-timestamp="${data.created_at}">${formattedTimestamp}</span>
             </div>
             <div class="message-text">${safeContent}</div>
-            ${isCurrentUser ? `
-                <div class="message-actions">
-                    <button class="btn-edit" onclick="startEditMessage('${data.id}')">Edit</button>
-                    <button class="btn-delete" onclick="confirmDeleteMessage('${data.id}')">Delete</button>
-                </div>
-            ` : ''}
         </div>
     `;
     
@@ -92,7 +80,6 @@ function addMessageToChat(data) {
     
     messageElement.scrollIntoView({ behavior: 'smooth' });
 }
-
 function updateMessage(data) {
     const messageElement = document.getElementById(`message-${data.id}`);
     if (!messageElement) return;

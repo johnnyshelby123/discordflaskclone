@@ -1,231 +1,259 @@
-/* Settings Page Styles */
-.settings-container {
-    display: flex;
-    height: 100vh;
-    width: 100%;
-    background-color: #36393f;
-    color: #dcddde;
+/* Responsive Server Settings CSS */
+
+:root {
+    --settings-max-width: 800px;
+    --settings-padding: 24px;
+    --settings-border-radius: 8px;
+    --settings-gap: 20px;
   }
   
-  .settings-sidebar {
-    width: 250px;
-    background-color: #2f3136;
-    border-right: 1px solid #202225;
-    display: flex;
-    flex-direction: column;
+  /* Settings Container */
+  .settings-container {
+    max-width: var(--settings-max-width);
+    margin: 0 auto;
+    padding: var(--settings-padding);
+    background-color: var(--dark-primary);
+    min-height: 100vh;
   }
   
+  /* Settings Header */
   .settings-header {
-    padding: 20px;
-    border-bottom: 1px solid #202225;
-  }
-  
-  .settings-header h2 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: white;
-  }
-  
-  .settings-nav {
-    display: flex;
-    flex-direction: column;
-    padding: 10px 0;
-    flex: 1;
-  }
-  
-  .settings-nav-item {
-    padding: 10px 20px;
-    color: #b9bbbe;
-    text-decoration: none;
-    font-size: 14px;
-    transition: background-color 0.2s;
-  }
-  
-  .settings-nav-item:hover {
-    background-color: rgba(79, 84, 92, 0.32);
-    color: #fff;
-  }
-  
-  .settings-nav-item.active {
-    background-color: rgba(79, 84, 92, 0.32);
-    color: #fff;
-    font-weight: 500;
-  }
-  
-  .settings-nav-item.back-button {
-    margin-top: auto;
-    border-top: 1px solid #202225;
-    padding-top: 15px;
-  }
-  
-  .settings-content {
-    flex: 1;
-    padding: 30px;
-    overflow-y: auto;
-  }
-  
-  .settings-section {
-    margin-bottom: 40px;
-  }
-  
-  .settings-section h3 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 16px;
-    font-weight: 600;
-    color: white;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #40444b;
-  }
-  
-  .user-profile-edit {
-    display: flex;
-    margin-bottom: 30px;
-  }
-  
-  .user-avatar-edit {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    margin-right: 20px;
-  }
-  
-  .user-avatar-edit img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-  
-  .avatar-upload-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 50%;
     display: flex;
     align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.2s;
-    cursor: pointer;
+    margin-bottom: var(--settings-gap);
+    padding-bottom: var(--settings-gap);
+    border-bottom: 1px solid var(--dark-tertiary);
+    position: relative;
   }
   
-  .avatar-upload-overlay:hover {
-    opacity: 1;
-  }
-  
-  .avatar-upload-overlay span {
-    color: white;
-    font-size: 12px;
+  .settings-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-normal);
+    margin: 0 auto;
     text-align: center;
-    padding: 0 10px;
   }
   
-  .user-info-edit {
-    flex: 1;
+  .back-button {
+    position: absolute;
+    left: 0;
+  }
+  
+  .back-button .btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  
+  /* Settings Content */
+  .settings-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--settings-gap);
+  }
+  
+  /* Settings Form */
+  .settings-form {
+    background-color: var(--dark-secondary);
+    padding: var(--settings-padding);
+    border-radius: var(--settings-border-radius);
+    margin-bottom: var(--settings-gap);
   }
   
   .form-group {
     margin-bottom: 20px;
   }
   
+  .form-group:last-child {
+    margin-bottom: 0;
+  }
+  
   .form-group label {
     display: block;
     margin-bottom: 8px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
-    color: #b9bbbe;
-    text-transform: uppercase;
+    color: var(--interactive-normal);
   }
   
-  .form-group input {
+  .form-group input[type="text"],
+  .form-group textarea {
     width: 100%;
     padding: 10px;
-    background-color: #40444b;
-    border: 1px solid #202225;
-    border-radius: 3px;
-    color: white;
-    font-size: 14px;
+    background-color: var(--dark-tertiary);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    color: var(--text-normal);
+    font-size: 16px;
+    transition: border-color 0.2s ease;
   }
   
-  .form-group input:focus {
+  .form-group input[type="text"]:focus,
+  .form-group textarea:focus {
+    border-color: var(--brand);
     outline: none;
-    border-color: #7289da;
   }
   
-  .form-group input[readonly] {
-    background-color: #2f3136;
-    cursor: not-allowed;
-  }
-  
-  .form-help {
-    margin-top: 5px;
+  .help-text {
+    margin-top: 4px;
     font-size: 12px;
-    color: #72767d;
+    color: var(--text-muted);
   }
   
+  /* Server Icon Upload */
+  .server-icon-upload {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .server-icon-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: var(--dark-tertiary);
+    flex-shrink: 0;
+  }
+  
+  .server-icon-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .upload-controls {
+    flex: 1;
+  }
+  
+  /* Form Actions */
   .form-actions {
+    margin-top: 24px;
     display: flex;
     justify-content: flex-end;
-    margin-top: 20px;
   }
   
-  .btn {
-    padding: 10px 16px;
-    border-radius: 3px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    border: none;
+  /* Danger Zone */
+  .danger-zone {
+    background-color: var(--dark-secondary);
+    padding: var(--settings-padding);
+    border-radius: var(--settings-border-radius);
+    border-left: 4px solid var(--danger);
   }
   
-  .btn-primary {
-    background-color: #7289da;
-    color: white;
+  .danger-zone h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--danger);
+    margin-bottom: 16px;
   }
   
-  .btn-primary:hover {
-    background-color: #677bc4;
-  }
-  
-  .btn-secondary {
-    background-color: #4f545c;
-    color: white;
-    margin-left: 10px;
-    text-decoration: none;
-    display: inline-flex;
+  .danger-action {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
+    gap: 16px;
   }
   
-  .btn-secondary:hover {
-    background-color: #5d6269;
+  .danger-info {
+    flex: 1;
   }
   
-  /* Responsive adjustments */
+  .danger-info h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-normal);
+    margin-bottom: 4px;
+  }
+  
+  .danger-info p {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin: 0;
+  }
+  
+  .delete-confirmation {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--dark-tertiary);
+  }
+  
+  .delete-confirmation p {
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  
+  .delete-confirmation input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    background-color: var(--dark-tertiary);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    color: var(--text-normal);
+  }
+  
+  /* Responsive Styles */
   @media (max-width: 768px) {
     .settings-container {
-      flex-direction: column;
+      padding: 16px;
     }
     
-    .settings-sidebar {
+    .settings-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+    }
+    
+    .back-button {
+      position: static;
+      margin-bottom: 8px;
+    }
+    
+    .settings-header h1 {
+      margin: 0;
+      text-align: left;
+    }
+    
+    .server-icon-upload {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .server-icon-preview {
+      margin-bottom: 12px;
+    }
+    
+    .danger-action {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .danger-info {
+      margin-bottom: 12px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .settings-container {
+      padding: 12px;
+    }
+    
+    .settings-form,
+    .danger-zone {
+      padding: 16px;
+    }
+    
+    .form-actions {
+      justify-content: center;
+    }
+    
+    .form-actions .btn {
       width: 100%;
-      height: auto;
-    }
-    
-    .user-profile-edit {
-      flex-direction: column;
-      align-items: center;
-    }
-    
-    .user-avatar-edit {
-      margin-right: 0;
-      margin-bottom: 20px;
     }
   }
   

@@ -5,13 +5,68 @@
 {% block styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+<style>
+    .server-image-preview {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background-color: #36393f;
+        margin: 10px auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border: 2px dashed #72767d;
+    }
+    
+    .server-image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .image-upload-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .file-input-label {
+        cursor: pointer;
+        padding: 8px 16px;
+        background-color: #4f545c;
+        color: white;
+        border-radius: 4px;
+        font-size: 14px;
+        margin-top: 10px;
+        transition: background-color 0.2s;
+    }
+    
+    .file-input-label:hover {
+        background-color: #5d6269;
+    }
+    
+    #server_image {
+        display: none;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="form-container">
     <div class="form-box">
         <h1>Create a New Server</h1>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
+            <div class="image-upload-container">
+                <div class="server-image-preview" id="image-preview">
+                    <img src="{{ url_for('static', filename='images/default_server_icon.png') }}" alt="Server Icon" id="preview-img">
+                </div>
+                <label for="server_image" class="file-input-label">Upload Server Icon</label>
+                <input type="file" id="server_image" name="server_image" accept="image/png,image/jpeg,image/jpg,image/webp,image/gif">
+                <div class="help-text">Upload an image for your server icon</div>
+            </div>
+            
             <div class="form-group">
                 <label for="name">Server Name</label>
                 <input type="text" id="name" name="name" required>
@@ -32,4 +87,26 @@
         </form>
     </div>
 </div>
+
+<script>
+    // Preview the selected image
+    document.getElementById('server_image').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // Check if file is an allowed image type
+            const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Please select a valid image file (PNG, JPG, WEBP, or GIF).');
+                e.target.value = '';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('preview-img').src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
 {% endblock %}

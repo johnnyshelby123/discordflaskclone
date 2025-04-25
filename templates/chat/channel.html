@@ -8,6 +8,56 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/context-menu.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdown.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/notifications.css') }}">
+<style>
+    /* Enhanced server icon styling to ensure proper circular display */
+    .server-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background-color: #36393f;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-decoration: none;
+        transition: border-radius 0.2s, background-color 0.2s;
+        position: relative;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+    }
+    
+    .server-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+    
+    .server-icon-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 18px;
+        border-radius: 50%;
+    }
+    
+    /* User avatar styling to match server icons */
+    .user-avatar, .message-avatar, .member-avatar {
+        border-radius: 50%;
+        overflow: hidden;
+    }
+    
+    .user-avatar img, .message-avatar img, .member-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -20,7 +70,7 @@
                 {% if user_server.image_url %}
                 <img src="{{ user_server.image_url }}" alt="{{ user_server.name }}">
                 {% else %}
-                <img src="{{ url_for('static', filename='images/default_server_icon.svg') }}" alt="{{ user_server.name }}">
+                <div class="server-icon-placeholder">{{ user_server.name[0] }}</div>
                 {% endif %}
             </a>
             {% endfor %}
@@ -62,13 +112,7 @@
                 <div class="user-name">{{ current_user.username }}</div>
                 <div class="user-status">Online</div>
             </div>
-            <div class="user-actions">
-                <div id="settings-btn" class="user-action-icon">⚙️</div>
-                <div id="settings-menu" class="settings-menu">
-                    <div class="settings-item" id="user-settings-btn">User Settings</div>
-                    <div class="settings-item danger" id="logout-btn">Logout</div>
-                </div>
-            </div>
+            {% include 'components/user_actions.html' %}
         </div>
     </div>
     
@@ -78,10 +122,6 @@
             <span class="chat-header-icon">#</span>
             <span class="chat-header-name">{{ channel.name }}</span>
             <div class="chat-header-actions">
-                <span class="chat-header-action">👥</span>
-                <span class="chat-header-action">🔍</span>
-                <span class="chat-header-action">📌</span>
-                <span class="chat-header-action">⚙️</span>
             </div>
         </div>
         
@@ -99,10 +139,6 @@
                         </div>
                         <div class="message-text">{{ message.content }}</div>
                         {% if message.user_id == current_user.id %}
-                        <div class="message-actions">
-                            <button class="btn-edit" onclick="startEditMessage('{{ message.id }}')">Edit</button>
-                            <button class="btn-delete" onclick="confirmDeleteMessage('{{ message.id }}')">Delete</button>
-                        </div>
                         {% endif %}
                     </div>
                 </div>
@@ -144,9 +180,6 @@
 
 <!-- Include modals -->
 {% include 'chat/invite_modal.html' %}
-{% include 'chat/user_settings_modal.html' %}
-{% include 'chat/delete_modal.html' %}
-{% include 'chat/server_settings_modal.html' %}
 {% include 'chat/delete_confirmation_modal.html' %}
 {% endblock %}
 
@@ -154,6 +187,112 @@
 <script>
     // Store current user ID for use in socket.js
     const currentUserId = "{{ current_user.id }}";
+    
+    // Process message content for proper display
+    function processMessageContent(content) {
+        if (!content) return '';
+        
+        // Add word breaks for very long words
+        content = addWordBreaks(content);
+        
+        // Format long messages with line breaks
+        content = formatLongMessage(content);
+        
+        // Escape HTML to prevent XSS
+        content = escapeHtml(content);
+        
+        return content;
+    }
+    
+    // Add zero-width spaces to break very long words
+    function addWordBreaks(text) {
+        return text.replace(/(\S{50})/g, '$1\u200B');
+    }
+    
+    // Format long messages with line breaks
+    function formatLongMessage(text) {
+        // If already contains line breaks, preserve them
+        if (text.includes('\n')) return text;
+        
+        // Break into lines of max 100 characters
+        let result = '';
+        let line = '';
+        
+        text.split(' ').forEach(word => {
+            if (line.length + word.length + 1 > 100) {
+                result += line + '\n';
+                line = word;
+            } else {
+                line += (line ? ' ' : '') + word;
+            }
+        });
+        
+        result += line;
+        return result;
+    }
+    
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // Override the addMessageToChat function to process message content
+    function addMessageToChat(message) {
+        const messagesContainer = document.getElementById('messages-container');
+        const noMessages = document.querySelector('.no-messages');
+        
+        // Remove "no messages" notice if it exists
+        if (noMessages) {
+            noMessages.remove();
+        }
+        
+        // Process message content
+        const processedContent = processMessageContent(message.content);
+        
+        // Create message element
+        const messageElement = document.createElement('div');
+        messageElement.className = 'message';
+        messageElement.id = `message-${message.id}`;
+        
+        // Set message HTML
+        messageElement.innerHTML = `
+            <div class="message-avatar">
+                <img src="${message.user.image_url || '/static/images/default_avatar.svg'}" alt="${message.user.username}">
+            </div>
+            <div class="message-content ${message.user_id === currentUserId ? 'message-own' : 'message-other'}">
+                <div class="message-header">
+                    <span class="message-username">${message.user.username}</span>
+                    <span class="message-timestamp" data-timestamp="${message.created_at}">${formatTimestamp(message.created_at)}</span>
+                </div>
+                <div class="message-text">${processedContent}</div>
+                ${message.user_id === currentUserId ? `
+                ` : ''}
+            </div>
+        `;
+        
+        // Add message to container
+        messagesContainer.appendChild(messageElement);
+        
+        // Scroll to bottom
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        
+        return messageElement;
+    }
+    
+    // Override the updateMessage function to process message content
+    function updateMessage(messageId, content) {
+        const messageElement = document.getElementById(`message-${messageId}`);
+        if (messageElement) {
+            const messageText = messageElement.querySelector('.message-text');
+            if (messageText) {
+                // Process message content
+                const processedContent = processMessageContent(content);
+                messageText.innerHTML = processedContent;
+            }
+        }
+    }
 </script>
 <script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
 <script src="{{ url_for('static', filename='js/socket.js') }}"></script>

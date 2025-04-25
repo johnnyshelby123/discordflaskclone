@@ -24,13 +24,10 @@ def join_by_invite(invite_code):
     server_data = servers[0]
     server = Server.from_dict(server_data)
     
-    # Check if user is already a member
     if server.is_member(current_user.id):
         return redirect(url_for('server.view_server', server_id=server.id))
     
-    # Add user to server members
     server.add_member(current_user.id)
     server.save(storage)
     
-    flash(f'You have joined the server: {server.name}')
     return redirect(url_for('server.view_server', server_id=server.id))

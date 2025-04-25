@@ -1,0 +1,8 @@
+.message-text {
+    color: #dcddde;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-wrap;
+    max-width: 100%;
+    overflow-wrap: break-word;
+}

@@ -20,11 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Settings menu functionality
     const settingsBtn = document.getElementById('settings-btn');
     const settingsMenu = document.getElementById('settings-menu');
-    const userSettingsBtn = document.getElementById('user-settings-btn');
-    const userSettingsModal = document.getElementById('user-settings-modal');
-    const closeSettingsModal = document.getElementById('close-settings-modal');
-    const saveSettingsBtn = document.getElementById('save-settings');
-    const cancelSettingsBtn = document.getElementById('cancel-settings');
     const logoutBtn = document.getElementById('logout-btn');
     
     if (settingsBtn && settingsMenu) {
@@ -36,33 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (serverDropdownMenu) {
                 serverDropdownMenu.style.display = 'none';
             }
-        });
-    }
-    
-    if (userSettingsBtn && userSettingsModal) {
-        userSettingsBtn.addEventListener('click', () => {
-            userSettingsModal.style.display = 'block';
-            settingsMenu.style.display = 'none';
-        });
-    }
-    
-    if (closeSettingsModal) {
-        closeSettingsModal.addEventListener('click', () => {
-            userSettingsModal.style.display = 'none';
-        });
-    }
-    
-    if (saveSettingsBtn) {
-        saveSettingsBtn.addEventListener('click', () => {
-            // Save settings logic would go here
-            userSettingsModal.style.display = 'none';
-            alert('Settings saved!');
-        });
-    }
-    
-    if (cancelSettingsBtn) {
-        cancelSettingsBtn.addEventListener('click', () => {
-            userSettingsModal.style.display = 'none';
         });
     }
     
@@ -120,3 +88,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+ 
