@@ -1,0 +1,111 @@
+/* Main CSS file for the application */
+
+:root {
+  /* Enhanced Discord-like color palette */
+  --dark-primary: #36393f;
+  --dark-secondary: #2f3136;
+  --dark-tertiary: #202225;
+  --text-normal: #ffffff;
+  --text-muted: #8e9297;
+  --text-link: #00b0f4;
+  --interactive-normal: #b9bbbe;
+  --interactive-hover: #dcddde;
+  --interactive-active: #fff;
+  --background-modifier-hover: rgba(79, 84, 92, 0.16);
+  --background-modifier-active: rgba(79, 84, 92, 0.24);
+  --background-modifier-selected: rgba(79, 84, 92, 0.32);
+  --background-modifier-accent: hsla(0, 0%, 100%, 0.06);
+  --brand: #5865F2;
+  --brand-hover: #4752C4;
+  --success: #3ba55c;
+  --danger: #ed4245;
+  --warning: #faa61a;
+  --scrollbar-thin-thumb: rgba(79, 84, 92, 0.3);
+  --scrollbar-thin-track: transparent;
+  --elevation-low: 0 1px 0 rgba(4, 4, 5, 0.2), 0 1.5px 0 rgba(6, 6, 7, 0.05), 0 2px 0 rgba(4, 4, 5, 0.05);
+  --elevation-medium: 0 4px 4px rgba(0, 0, 0, 0.16);
+  --elevation-high: 0 8px 16px rgba(0, 0, 0, 0.24);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Whitney', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: var(--dark-primary);
+  color: var(--text-normal);
+  line-height: 1.5;
+  font-size: 16px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--scrollbar-thin-track);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thin-thumb);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(79, 84, 92, 0.5);
+}
+
+a {
+  color: var(--text-link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.container {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  border: none;
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--brand);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--brand-hover);
+}
+
+.flash-message {
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 3px;
+  background-color: var(--danger);
+  color: white;
+}

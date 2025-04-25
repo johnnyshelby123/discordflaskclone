@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}Servers - Flask Discord Clone{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <!-- Server sidebar -->
+    <div class="server-sidebar">
+        <div class="server-list">
+            {% for server in servers %}
+            <a href="{{ url_for('server.view_server', server_id=server.id) }}" class="server-icon {% if server.id == current_server_id %}active{% endif %}">
+                {% if server.image_url %}
+                <img src="{{ server.image_url }}" alt="{{ server.name }}">
+                {% else %}
+                <div class="server-icon-placeholder">{{ server.name[0] }}</div>
+                {% endif %}
+            </a>
+            {% endfor %}
+            <a href="{{ url_for('server.create_server') }}" class="add-server-button">+</a>
+        </div>
+    </div>
+    
+    <!-- Main content area -->
+    <div class="chat-area">
+        <div class="welcome-screen">
+            <h1>Welcome to Flask Discord Clone</h1>
+            <p>Select a server from the sidebar or create a new one to get started.</p>
+            <div class="actions">
+                <a href="{{ url_for('server.create_server') }}" class="btn btn-primary">Create a Server</a>
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/socket.js') }}"></script>
+{% endblock %}

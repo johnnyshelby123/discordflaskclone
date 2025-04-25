@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block title %}Chat - Flask Discord Clone{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <!-- Temporary placeholder for chat interface -->
+    <div class="welcome-screen">
+        <h1>Welcome, {{ current_user.username }}!</h1>
+        <p>This is a placeholder for the chat interface. The full chat functionality with rooms will be implemented in the next phase.</p>
+        <div class="actions">
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">Logout</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

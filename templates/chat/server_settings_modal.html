@@ -1,0 +1,168 @@
+<!-- Server Settings Modal -->
+<div id="server-settings-modal" class="modal">
+    <div class="modal-content server-settings-modal">
+        <div class="modal-sidebar">
+            <div class="settings-category active" data-target="overview">Overview</div>
+            <div class="settings-category" data-target="roles">Roles</div>
+            <div class="settings-category" data-target="emoji">Emoji</div>
+            <div class="settings-category" data-target="moderation">Moderation</div>
+            <div class="settings-category" data-target="integrations">Integrations</div>
+            <div class="settings-category" data-target="widget">Widget</div>
+            <div class="settings-category danger" data-target="delete">Delete Server</div>
+        </div>
+        <div class="modal-main">
+            <div class="modal-header">
+                <h2>Server Settings</h2>
+                <span class="close-modal" id="close-server-settings">&times;</span>
+            </div>
+            
+            <!-- Overview Section -->
+            <div class="settings-section active" id="overview-section">
+                <div class="settings-group">
+                    <h3>Server Overview</h3>
+                    <div class="form-group">
+                        <label for="server-name">Server Name</label>
+                        <input type="text" id="server-name" value="{{ server.name }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="server-description">Description</label>
+                        <textarea id="server-description">{{ server.description }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Server Icon</label>
+                        <div class="server-icon-preview">
+                            <img src="{{ server.icon_url or '/static/images/default_server_icon.svg' }}" alt="{{ server.name }}">
+                        </div>
+                        <button class="btn btn-secondary">Upload Image</button>
+                    </div>
+                    <button class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+            
+            <!-- Roles Section -->
+            <div class="settings-section" id="roles-section">
+                <div class="settings-group">
+                    <h3>Roles</h3>
+                    <p>Manage roles and permissions for your server members.</p>
+                    <div class="placeholder-content">Role management will be implemented in a future update.</div>
+                </div>
+            </div>
+            
+            <!-- Emoji Section -->
+            <div class="settings-section" id="emoji-section">
+                <div class="settings-group">
+                    <h3>Emoji</h3>
+                    <p>Upload custom emoji for your server.</p>
+                    <div class="placeholder-content">Emoji management will be implemented in a future update.</div>
+                </div>
+            </div>
+            
+            <!-- Moderation Section -->
+            <div class="settings-section" id="moderation-section">
+                <div class="settings-group">
+                    <h3>Moderation</h3>
+                    <p>Configure moderation settings for your server.</p>
+                    <div class="placeholder-content">Moderation tools will be implemented in a future update.</div>
+                </div>
+            </div>
+            
+            <!-- Integrations Section -->
+            <div class="settings-section" id="integrations-section">
+                <div class="settings-group">
+                    <h3>Integrations</h3>
+                    <p>Connect third-party services to your server.</p>
+                    <div class="placeholder-content">Integrations will be implemented in a future update.</div>
+                </div>
+            </div>
+            
+            <!-- Widget Section -->
+            <div class="settings-section" id="widget-section">
+                <div class="settings-group">
+                    <h3>Widget</h3>
+                    <p>Create a widget to showcase your server on external websites.</p>
+                    <div class="placeholder-content">Widget creation will be implemented in a future update.</div>
+                </div>
+            </div>
+            
+            <!-- Delete Server Section -->
+<div class="settings-section" id="delete-section">
+    <div class="settings-group danger-zone">
+        <h3>Delete Server</h3>
+        <p class="warning-text">This action is permanent and cannot be undone. All channels and messages will be deleted.</p>
+        <div class="delete-confirmation">
+            <p>Please type <strong>{{ server.name }}</strong> to confirm:</p>
+            <input type="text" id="delete-server-confirm" placeholder="Enter server name">
+            <button id="delete-server-btn" class="btn btn-danger" disabled>Delete Server</button>
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Server settings modal functionality
+    const serverSettingsBtn = document.getElementById('server-settings-btn');
+    const serverSettingsModal = document.getElementById('server-settings-modal');
+    const closeServerSettings = document.getElementById('close-server-settings');
+    const settingsCategories = document.querySelectorAll('.settings-category');
+    const settingsSections = document.querySelectorAll('.settings-section');
+    const deleteServerConfirm = document.getElementById('delete-server-confirm');
+    const deleteServerBtn = document.getElementById('delete-server-btn');
+    const serverName = "{{ server.name }}";
+    
+    // Open server settings modal
+    if (serverSettingsBtn) {
+        serverSettingsBtn.addEventListener('click', function() {
+            serverSettingsModal.style.display = 'block';
+        });
+    }
+    
+    // Close server settings modal
+    if (closeServerSettings) {
+        closeServerSettings.addEventListener('click', function() {
+            serverSettingsModal.style.display = 'none';
+        });
+    }
+    
+    // Switch between settings categories
+    settingsCategories.forEach(category => {
+        category.addEventListener('click', function() {
+            // Remove active class from all categories
+            settingsCategories.forEach(c => c.classList.remove('active'));
+            // Add active class to clicked category
+            this.classList.add('active');
+            
+            // Hide all sections
+            settingsSections.forEach(section => section.classList.remove('active'));
+            // Show selected section
+            const targetSection = document.getElementById(this.dataset.target + '-section');
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+        });
+    });
+    
+    // Enable delete button only when server name is correctly typed
+    if (deleteServerConfirm && deleteServerBtn) {
+        deleteServerConfirm.addEventListener('input', function() {
+            deleteServerBtn.disabled = this.value !== serverName;
+        });
+        
+        // Handle delete server button click
+        deleteServerBtn.addEventListener('click', function() {
+            if (deleteServerConfirm.value === serverName) {
+                window.location.href = "{{ url_for('server.delete_server', server_id=server.id) }}";
+            }
+        });
+    }
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target === serverSettingsModal) {
+            serverSettingsModal.style.display = 'none';
+        }
+    });
+});
+</script>

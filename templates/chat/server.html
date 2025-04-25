@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ server.name }} - Flask Discord Clone{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <!-- Server sidebar -->
+    <div class="server-sidebar">
+        <div class="server-list">
+            {% for user_server in user_servers %}
+            <a href="{{ url_for('server.view_server', server_id=user_server.id) }}" class="server-icon {% if user_server.id == server.id %}active{% endif %}">
+                {% if user_server.image_url %}
+                <img src="{{ user_server.image_url }}" alt="{{ user_server.name }}">
+                {% else %}
+                <div class="server-icon-placeholder">{{ user_server.name[0] }}</div>
+                {% endif %}
+            </a>
+            {% endfor %}
+            <a href="{{ url_for('server.create_server') }}" class="add-server-button">+</a>
+        </div>
+    </div>
+    
+    <!-- Channel sidebar -->
+    <div class="channel-sidebar">
+        <div class="server-header">
+            <div class="server-name">{{ server.name }}</div>
+            <div class="server-dropdown">⋮</div>
+        </div>
+        
+        <div class="channel-list">
+            <div class="channel-category">
+                <span>Text Channels</span>
+                {% if server.owner_id == current_user.id %}
+                <a href="{{ url_for('channel.create_channel', server_id=server.id) }}" class="add-channel-button">+</a>
+                {% endif %}
+            </div>
+            
+            {% for channel in channels %}
+            <a href="{{ url_for('channel.view_channel', channel_id=channel.id) }}" class="channel-item {% if current_channel_id == channel.id %}active{% endif %}">
+                <span class="channel-icon">#</span>
+                <span class="channel-name">{{ channel.name }}</span>
+            </a>
+            {% endfor %}
+        </div>
+        
+        <div class="user-area">
+            <div class="user-avatar">
+                <img src="{{ current_user.image_url }}" alt="{{ current_user.username }}">
+            </div>
+            <div class="user-info">
+                <div class="user-name">{{ current_user.username }}</div>
+                <div class="user-status">Online</div>
+            </div>
+            <div class="user-actions">
+                <a href="{{ url_for('auth.logout') }}" class="user-action-icon">⚙️</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main content area - Welcome screen removed -->
+    <div class="chat-area">
+        <!-- Intentionally left empty to remove welcome screen -->
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Store current user ID for use in socket.js
+    const currentUserId = "{{ current_user.id }}";
+</script>
+<script src="{{ url_for('static', filename='js/socket.js') }}"></script>
+{% endblock %}

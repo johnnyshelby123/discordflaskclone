@@ -1,0 +1,77 @@
+<!-- Server Dropdown Menu -->
+<div class="dropdown" id="server-dropdown-container">
+    <div class="server-dropdown" id="server-dropdown-trigger">⋮</div>
+    <div class="dropdown-content server-dropdown-content {% if server.owner_id == current_user.id %}owner{% else %}non-owner{% endif %}" id="server-dropdown-menu">
+        <div class="dropdown-item" id="invite-people-btn">
+            <div class="dropdown-icon">👥</div>
+            <div class="dropdown-text">Invite People</div>
+        </div>
+        
+        <div class="dropdown-divider"></div>
+        
+        <div class="dropdown-item owner-only" id="server-settings-btn">
+            <div class="dropdown-icon">⚙️</div>
+            <div class="dropdown-text">Server Settings</div>
+        </div>
+        
+        <div class="dropdown-item non-owner-only danger" id="leave-server-btn">
+            <div class="dropdown-icon">🚪</div>
+            <div class="dropdown-text">Leave Server</div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dropdownTrigger = document.getElementById('server-dropdown-trigger');
+    const dropdownMenu = document.getElementById('server-dropdown-menu');
+    const invitePeopleBtn = document.getElementById('invite-people-btn');
+    const leaveServerBtn = document.getElementById('leave-server-btn');
+    const serverSettingsBtn = document.getElementById('server-settings-btn');
+    const inviteModal = document.getElementById('invite-modal');
+    const serverSettingsModal = document.getElementById('server-settings-modal');
+    
+    // Toggle dropdown menu
+    if (dropdownTrigger && dropdownMenu) {
+        dropdownTrigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        });
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (dropdownMenu && dropdownMenu.classList.contains('show') && 
+            !dropdownMenu.contains(e.target) && 
+            e.target !== dropdownTrigger) {
+            dropdownMenu.classList.remove('show');
+        }
+    });
+    
+    // Invite People button
+    if (invitePeopleBtn && inviteModal) {
+        invitePeopleBtn.addEventListener('click', function() {
+            inviteModal.style.display = 'block';
+            dropdownMenu.classList.remove('show');
+        });
+    }
+    
+    // Leave Server button
+    if (leaveServerBtn) {
+        leaveServerBtn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to leave this server?')) {
+                window.location.href = "{{ url_for('server.leave_server', server_id=server.id) }}";
+            }
+            dropdownMenu.classList.remove('show');
+        });
+    }
+    
+    // Server Settings button
+    if (serverSettingsBtn && serverSettingsModal) {
+        serverSettingsBtn.addEventListener('click', function() {
+            serverSettingsModal.style.display = 'block';
+            dropdownMenu.classList.remove('show');
+        });
+    }
+});
+</script>

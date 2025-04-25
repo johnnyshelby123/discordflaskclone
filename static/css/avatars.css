@@ -1,0 +1,22 @@
+/* Default avatar image for users without custom avatars */
+.user-avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #7289da;
+    object-fit: cover;
+}
+
+/* Default avatar placeholder when image is missing */
+.user-avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #7289da;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+}

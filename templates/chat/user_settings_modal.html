@@ -1,0 +1,47 @@
+<!-- User Settings Modal -->
+<div id="user-settings-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>User Settings</h2>
+            <span class="close-modal" id="close-settings-modal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="settings-section">
+                <h3>My Account</h3>
+                <div class="user-profile-edit">
+                    <div class="user-avatar-edit">
+                        <img src="{{ current_user.image_url or url_for('static', filename='images/default_avatar.png') }}" alt="{{ current_user.username }}">
+                        <div class="avatar-upload-overlay">
+                            <span>Change Avatar</span>
+                        </div>
+                    </div>
+                    <div class="user-info-edit">
+                        <div class="form-group">
+                            <label for="username-edit">Username</label>
+                            <input type="text" id="username-edit" value="{{ current_user.username }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="email-edit">Email</label>
+                            <input type="email" id="email-edit" value="{{ current_user.email }}" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h3>Appearance</h3>
+                <div class="form-group">
+                    <label for="theme-select">Theme</label>
+                    <select id="theme-select">
+                        <option value="dark" selected>Dark</option>
+                        <option value="light">Light</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Privacy & Safety section removed as requested -->
+        </div>
+        <div class="modal-footer">
+            <button id="save-settings" class="btn btn-primary">Save Changes</button>
+            <button id="cancel-settings" class="btn btn-secondary">Cancel</button>
+        </div>
+    </div>
+</div>

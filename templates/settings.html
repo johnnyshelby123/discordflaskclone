@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+
+{% block title %}User Settings - Flask Discord Clone{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <div class="settings-sidebar">
+        <div class="settings-header">
+            <h2>User Settings</h2>
+        </div>
+        <div class="settings-nav">
+            <a href="{{ url_for('user.settings') }}" class="settings-nav-item active">My Account</a>
+            <a href="{{ url_for('server.list_servers') }}" class="settings-nav-item back-button">Back to Discord</a>
+        </div>
+    </div>
+    
+    <div class="settings-content">
+        <div class="settings-section">
+            <h3>My Account</h3>
+            <form id="profile-form" action="{{ url_for('user.update_profile') }}" method="POST" enctype="multipart/form-data">
+                <div class="user-profile-edit">
+                    <div class="user-avatar-edit">
+                        <img id="avatar-preview" src="{{ current_user.image_url or url_for('static', filename='images/default_avatar.png') }}" alt="{{ current_user.username }}">
+                        <div class="avatar-upload-overlay" id="avatar-upload-btn">
+                            <span>Change Avatar</span>
+                        </div>
+                        <input type="file" id="avatar-upload" name="avatar" accept="image/*" style="display: none;">
+                    </div>
+                    <div class="user-info-edit">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" value="{{ current_user.username }}" readonly>
+                            <p class="form-help">Username cannot be changed</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a href="{{ url_for('server.list_servers') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Avatar upload preview
+        const avatarUploadBtn = document.getElementById('avatar-upload-btn');
+        const avatarUpload = document.getElementById('avatar-upload');
+        const avatarPreview = document.getElementById('avatar-preview');
+        
+        if (avatarUploadBtn && avatarUpload && avatarPreview) {
+            avatarUploadBtn.addEventListener('click', function() {
+                avatarUpload.click();
+            });
+            
+            avatarUpload.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        avatarPreview.src = e.target.result;
+                    };
+                    
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

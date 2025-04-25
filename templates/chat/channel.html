@@ -1,0 +1,201 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ channel.name }} - {{ server.name }} - Flask Discord Clone{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modals.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/context-menu.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dropdown.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/notifications.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <!-- Server sidebar -->
+    <div class="server-sidebar">
+        <div class="server-list">
+            {% for user_server in user_servers %}
+            <a href="{{ url_for('server.view_server', server_id=user_server.id) }}" class="server-icon {% if user_server.id == server.id %}active{% endif %}">
+                {% if user_server.image_url %}
+                <img src="{{ user_server.image_url }}" alt="{{ user_server.name }}">
+                {% else %}
+                <img src="{{ url_for('static', filename='images/default_server_icon.svg') }}" alt="{{ user_server.name }}">
+                {% endif %}
+            </a>
+            {% endfor %}
+            <a href="{{ url_for('server.create_server') }}" class="add-server-button">+</a>
+        </div>
+    </div>
+    
+    <!-- Mobile toggle button for channel sidebar -->
+    <button class="mobile-toggle" id="mobile-toggle" style="display: none;">☰</button>
+    
+    <!-- Channel sidebar -->
+    <div class="channel-sidebar">
+        <div class="server-header" data-server-id="{{ server.id }}">
+            <div class="server-name">{{ server.name }}</div>
+            {% include 'chat/server_dropdown.html' %}
+        </div>
+        
+        <div class="channel-list">
+            <div class="channel-category">
+                <span>Text Channels</span>
+                {% if server.owner_id == current_user.id %}
+                <a href="{{ url_for('channel.create_channel', server_id=server.id) }}" class="add-channel-button">+</a>
+                {% endif %}
+            </div>
+            
+            {% for ch in channels %}
+            <a href="{{ url_for('channel.view_channel', channel_id=ch.id) }}" class="channel-item {% if ch.id == channel.id %}active{% endif %}">
+                <span class="channel-icon">#</span>
+                <span class="channel-name">{{ ch.name }}</span>
+            </a>
+            {% endfor %}
+        </div>
+        
+        <div class="user-area">
+            <div class="user-avatar">
+                <img src="{{ current_user.image_url or url_for('static', filename='images/default_avatar.svg') }}" alt="{{ current_user.username }}">
+            </div>
+            <div class="user-info">
+                <div class="user-name">{{ current_user.username }}</div>
+                <div class="user-status">Online</div>
+            </div>
+            <div class="user-actions">
+                <div id="settings-btn" class="user-action-icon">⚙️</div>
+                <div id="settings-menu" class="settings-menu">
+                    <div class="settings-item" id="user-settings-btn">User Settings</div>
+                    <div class="settings-item danger" id="logout-btn">Logout</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main chat area -->
+    <div class="chat-area">
+        <div class="chat-header">
+            <span class="chat-header-icon">#</span>
+            <span class="chat-header-name">{{ channel.name }}</span>
+            <div class="chat-header-actions">
+                <span class="chat-header-action">👥</span>
+                <span class="chat-header-action">🔍</span>
+                <span class="chat-header-action">📌</span>
+                <span class="chat-header-action">⚙️</span>
+            </div>
+        </div>
+        
+        <div id="messages-container" class="messages-container">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="message" id="message-{{ message.id }}">
+                    <div class="message-avatar">
+                        <img src="{{ message.user.image_url or url_for('static', filename='images/default_avatar.svg') }}" alt="{{ message.user.username }}">
+                    </div>
+                    <div class="message-content {% if message.user_id == current_user.id %}message-own{% else %}message-other{% endif %}">
+                        <div class="message-header">
+                            <span class="message-username">{{ message.user.username }}</span>
+                            <span class="message-timestamp" data-timestamp="{{ message.created_at }}">{{ message.created_at }}</span>
+                        </div>
+                        <div class="message-text">{{ message.content }}</div>
+                        {% if message.user_id == current_user.id %}
+                        <div class="message-actions">
+                            <button class="btn-edit" onclick="startEditMessage('{{ message.id }}')">Edit</button>
+                            <button class="btn-delete" onclick="confirmDeleteMessage('{{ message.id }}')">Delete</button>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-messages">
+                    <p>No messages yet. Be the first to send a message!</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="message-input-container">
+            <div id="message-input-form" class="message-input-form" data-channel-id="{{ channel.id }}">
+                <input type="text" id="message-input" class="message-input-field" placeholder="Message #{{ channel.name }}" autocomplete="off">
+                <button id="message-send-button" class="message-input-button">Send</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Member sidebar -->
+    <div class="member-sidebar">
+        <div class="member-category">Members - {{ server.members|length }}</div>
+        <div class="member-list">
+            {% for member in members %}
+            <div class="member-item" data-user-id="{{ member.id }}">
+                <div class="member-avatar">
+                    <img src="{{ member.image_url or url_for('static', filename='images/default_avatar.svg') }}" alt="{{ member.username }}">
+                </div>
+                <div class="member-name">{{ member.username }}</div>
+                <div class="member-status {% if member.is_online %}online{% else %}offline{% endif %}"></div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Store current channel ID for Socket.IO -->
+<div id="current-channel" data-channel-id="{{ channel.id }}" style="display: none;"></div>
+
+<!-- Include modals -->
+{% include 'chat/invite_modal.html' %}
+{% include 'chat/user_settings_modal.html' %}
+{% include 'chat/delete_modal.html' %}
+{% include 'chat/server_settings_modal.html' %}
+{% include 'chat/delete_confirmation_modal.html' %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Store current user ID for use in socket.js
+    const currentUserId = "{{ current_user.id }}";
+</script>
+<script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
+<script src="{{ url_for('static', filename='js/socket.js') }}"></script>
+<script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+<script src="{{ url_for('static', filename='js/context-menu.js') }}"></script>
+<script src="{{ url_for('static', filename='js/online-status.js') }}"></script>
+<script src="{{ url_for('static', filename='js/member-list.js') }}"></script>
+<script src="{{ url_for('static', filename='js/channel-list.js') }}"></script>
+<script>
+    // Mobile responsiveness JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const channelSidebar = document.querySelector('.channel-sidebar');
+        
+        // Show mobile toggle button on small screens
+        function checkScreenSize() {
+            if (window.innerWidth <= 480) {
+                mobileToggle.style.display = 'block';
+            } else {
+                mobileToggle.style.display = 'none';
+                channelSidebar.classList.remove('mobile-active');
+            }
+        }
+        
+        // Toggle channel sidebar on mobile
+        mobileToggle.addEventListener('click', function() {
+            channelSidebar.classList.toggle('mobile-active');
+        });
+        
+        // Check screen size on load and resize
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
+        
+        // Close channel sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 480 && 
+                !channelSidebar.contains(e.target) && 
+                e.target !== mobileToggle && 
+                channelSidebar.classList.contains('mobile-active')) {
+                channelSidebar.classList.remove('mobile-active');
+            }
+        });
+    });
+</script>
+{% endblock %}

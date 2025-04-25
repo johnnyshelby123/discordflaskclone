@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block title %}Error - Flask Discord Clone{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<style>
+    .error-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    .error-title {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: #f04747;
+    }
+    
+    .error-message {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        color: #dcddde;
+    }
+    
+    .error-actions {
+        margin-top: 1rem;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 500;
+        margin: 0 0.5rem;
+    }
+    
+    .btn-primary {
+        background-color: #7289da;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: #677bc4;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <h1 class="error-title">Oops! Something went wrong</h1>
+    <p class="error-message">{{ error }}</p>
+    <div class="error-actions">
+        <a href="{{ url_for('index') }}" class="btn btn-primary">Return to Home</a>
+    </div>
+</div>
+{% endblock %}

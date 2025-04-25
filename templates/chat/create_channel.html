@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}Create Channel - Flask Discord Clone{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-box">
+        <h1>Create a New Channel</h1>
+        <h2>Server: {{ server.name }}</h2>
+        <form method="post">
+            <div class="form-group">
+                <label for="name">Channel Name</label>
+                <input type="text" id="name" name="name" required>
+                <div class="help-text">Channel names cannot contain spaces or special characters.</div>
+            </div>
+            <div class="form-actions">
+                <a href="{{ url_for('server.view_server', server_id=server.id) }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Create Channel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

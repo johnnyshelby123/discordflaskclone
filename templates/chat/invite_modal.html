@@ -1,0 +1,16 @@
+<!-- Server Invite Modal -->
+<div id="invite-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Invite People to {{ server.name }}</h2>
+            <span class="close-modal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Share this link with others to invite them to your server:</p>
+            <div class="invite-link-container">
+                <input type="text" id="invite-link" readonly value="{{ url_for('gg.join_by_invite', invite_code=server.invite_code, _external=True) }}">
+                <button id="copy-invite-link">Copy</button>
+            </div>
+        </div>
+    </div>
+</div>
